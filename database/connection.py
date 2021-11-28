@@ -8,7 +8,7 @@ class EdgeDatabase:
         self.dsn = dsn
 
     async def create_pool(self):
-        self.pool: AsyncIOClient = await edgedb.create_async_client(
+        self.pool: AsyncIOClient = edgedb.create_async_client(
             self.dsn
         )
         ping_query = 'select 1'
