@@ -1,5 +1,6 @@
 import edgedb
 from edgedb import AsyncIOClient
+from kafka import KafkaProducer
 
 
 class EdgeDatabase:
@@ -16,3 +17,9 @@ class EdgeDatabase:
 
     async def close_pool(self):
         await self.pool.aclose()
+
+
+class KafkaQueue(KafkaProducer):
+
+    def __init__(self):
+        pass
