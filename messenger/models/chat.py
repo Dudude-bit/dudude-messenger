@@ -22,3 +22,8 @@ class CreateChatModel(BaseModel):
             assert name is None, 'can\'t set name to a private chat'
 
         return values
+
+
+class ResponseChatModel(BaseModel):
+    type: ChatTypes
+    name: str = None
