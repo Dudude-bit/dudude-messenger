@@ -13,7 +13,7 @@ module default {
         };
         required property activation_code -> uuid {
             readonly := true;
-            constrain exclusive;
+            constraint exclusive;
         };
         link token := .<user[IS Token];
     }
