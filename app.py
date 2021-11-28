@@ -1,26 +1,31 @@
 import os
+from typing import Callable
 
 from fastapi import FastAPI
+from fastapi.responses import UJSONResponse
 from starlette.requests import Request
 
 from database import EdgeDatabase
 from exceptions import NotImproperlyConfigure
+import messenger
 
 
 def create_app():
 
-    app = FastAPI()
+    app = FastAPI(default_response_class=UJSONResponse)
 
-    edgedb_dsn = os.getenv('edgedb_dsn', None)
+    app.include_router(messenger.router)
 
-    if edgedb_dsn is None:
-        raise NotImproperlyConfigure('define edgeb dsn')
+    edgedb_instance = os.getenv('edgedb_instance', None)
 
-    db = EdgeDatabase(edgedb_dsn)
+    if edgedb_instance is None:
+        raise NotImproperlyConfigure('define edgedb instance name')
+
+    db = EdgeDatabase(edgedb_instance)
 
     @app.middleware('http')
-    async def add_db_pool(request: Request, call_next):
-        request.state.db_pool = db.pool
+    async def add_db_pool(request: Request, call_next: Callable):
+        request.state.pool = db.pool
         response = await call_next(request)
         return response
 
