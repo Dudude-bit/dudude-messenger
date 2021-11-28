@@ -15,6 +15,10 @@ def get_db_pool(request: Request):
     return request.state.pool
 
 
+def get_kafka(request: Request):
+    return request.state.kafka
+
+
 async def _create_chat(chat_data, pool: AsyncIOClient):
     pass
 
