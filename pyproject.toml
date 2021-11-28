@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "edge_db_test"
+name = "dudude-messenger"
 version = "0.1.0"
 description = ""
 authors = ["Kirill Inyakin <kirillinyakin@yandex.ru>"]
@@ -7,11 +7,9 @@ authors = ["Kirill Inyakin <kirillinyakin@yandex.ru>"]
 [tool.poetry.dependencies]
 python = "^3.9"
 fastapi = "^0.70.0"
-edgedb = "^0.18.0"
+edgedb = "^0.18.4"
 uvicorn = "^0.15.0"
-psycopg2-binary = "^2.9.2"
-pymongo = "^3.12.1"
-tqdm = "^4.62.3"
+ujson = "^4.3.0"
 
 [tool.poetry.dev-dependencies]
 
