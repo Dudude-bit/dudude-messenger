@@ -19,7 +19,13 @@ class EdgeDatabase:
         await self.pool.aclose()
 
 
-class KafkaQueue(KafkaProducer):
+class ExtendedKafkaProducer(KafkaProducer):
+    
+    def __init__(self, **kwargs):
+        super(ExtendedKafkaProducer, self).__init__(**kwargs)
 
-    def __init__(self):
-        pass
+    async def check_for_connection(self):
+        assert self.bootstrap_connected(), 'Can\'t connect to Kafka'
+    
+    async def close_connection(self):
+        self.close()

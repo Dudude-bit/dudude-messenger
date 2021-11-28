@@ -1,1 +1,1 @@
-from .connection import EdgeDatabase
+from .connection import EdgeDatabase, ExtendedKafkaProducer
