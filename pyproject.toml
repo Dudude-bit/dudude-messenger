@@ -10,6 +10,8 @@ fastapi = "^0.70.0"
 edgedb = "^0.18.4"
 uvicorn = "^0.15.0"
 ujson = "^4.3.0"
+kafka-python = "^2.0.2"
+pydantic = {extras = ["email"], version = "^1.8.2"}
 
 [tool.poetry.dev-dependencies]
 
