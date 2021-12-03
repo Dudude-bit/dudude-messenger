@@ -1,6 +1,6 @@
 from enum import Enum
 
-from pydantic import BaseModel, validator, root_validator
+from pydantic import BaseModel, root_validator
 
 
 class ChatTypes(str, Enum):

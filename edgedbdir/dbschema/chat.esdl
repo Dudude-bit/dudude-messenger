@@ -11,7 +11,6 @@ module default {
         property name -> str;
         required multi link members -> User {
             property role -> str;
-
         }
     }
 }
