@@ -19,5 +19,5 @@ async def create_chat_view(data: CreateChatModel, user=Depends(get_user_from_req
             status.HTTP_401_UNAUTHORIZED,
             NotSuccessDetailChoices.NOT_AUTHORISED
         )
-    result: Object = await create_chat(data, user, pool)
+    result: dict = await create_chat(data, user, pool)
     return result
