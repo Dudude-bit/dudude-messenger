@@ -1,6 +1,6 @@
+import nats
 import edgedb
 from edgedb import AsyncIOClient
-from kafka import KafkaProducer
 
 
 class EdgeDatabase:
@@ -19,13 +19,14 @@ class EdgeDatabase:
         await self.pool.aclose()
 
 
-class ExtendedKafkaProducer(KafkaProducer):
-    
-    def __init__(self, **kwargs):
-        super(ExtendedKafkaProducer, self).__init__(**kwargs)
+class NatsQueue:
 
-    async def check_for_connection(self):
-        assert self.bootstrap_connected(), 'Can\'t connect to Kafka'
+    def __init__(self, dsn):
+        self.client = None
+        self.dsn = dsn
+
+    async def connect(self):
+        self.client = await nats.connect([self.dsn])
     
     async def close_connection(self):
-        self.close()
+        await self.client.close()

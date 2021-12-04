@@ -1,1 +1,1 @@
-from .connection import EdgeDatabase, ExtendedKafkaProducer
+from .connection import EdgeDatabase, NatsQueue
