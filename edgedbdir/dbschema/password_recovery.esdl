@@ -8,6 +8,8 @@ module default {
             constraint exclusive;
             readonly := true;
         };
-        required link user -> User;
+        required link user -> User{
+            on target delete delete source;
+        }
     }
 }
