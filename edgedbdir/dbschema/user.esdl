@@ -11,10 +11,14 @@ module default {
         required property email -> email {
             constraint exclusive;
         };
+        required property password -> str;
         required property activation_code -> uuid {
             readonly := true;
             constraint exclusive;
         };
+        required property is_active -> bool {
+            default := false;
+        }
         link token := .<user[IS Token];
     }
 }
