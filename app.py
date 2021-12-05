@@ -62,3 +62,7 @@ if __name__ == '__main__':
 # TODO add hash function on password in user model
 # TODO think about not to query info again
 #  after creating instance at edgedb and get it from request json (not possible every time)
+# TODO change Depends(get_user_from_request) to Security(get_user_from_request)
+# TODO change logic to deny no user not in view
+# TODO handle no user found on login
+# TODO think about move all queries to one place
