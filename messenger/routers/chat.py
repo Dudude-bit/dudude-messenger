@@ -5,6 +5,7 @@ from edgedb import Object
 from messenger.controllers.chat import create_chat
 from messenger.models.chat import CreateChatModel, ResponseChatModel
 from messenger.service.enums import NotSuccessDetailChoices
+from messenger.service.exceptions import MessengerException
 from messenger.service.utils import get_user_from_request, get_db_pool
 
 router = APIRouter(
@@ -14,8 +15,8 @@ router = APIRouter(
 
 @router.post('/', response_model=ResponseChatModel)
 async def create_chat_view(data: CreateChatModel, user=Depends(get_user_from_request), pool=Depends(get_db_pool)):
-    if not user:
-        raise HTTPException(
+    if user is None:
+        raise MessengerException(
             status.HTTP_401_UNAUTHORIZED,
             NotSuccessDetailChoices.NOT_AUTHORISED
         )
