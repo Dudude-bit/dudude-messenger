@@ -2,9 +2,9 @@ import uuid
 
 from fastapi import APIRouter, Depends, Response, status
 
-from messenger.controllers.user import create_user, recover_password, login, activate_user
+from messenger.controllers.user import create_user, recover_password, login, activate_user, change_password
 from messenger.models.user import CreateUserModel, CreatePasswordRecoveryModel, ResponseUserModel, LoginModel, \
-    ResponseLoginModel
+    ResponseLoginModel, ChangePasswordModel
 from messenger.service.utils import get_db_pool, get_nats_client
 
 router = APIRouter(
@@ -28,7 +28,6 @@ async def activate_user_view(activation_code: uuid.UUID, pool=Depends(get_db_poo
     )
 
 
-
 @router.post('/login', response_model=ResponseLoginModel)
 async def login_view(data: LoginModel, pool=Depends(get_db_pool)):
     result: dict = await login(data, pool)
@@ -43,4 +42,12 @@ async def password_recovery_view(data: CreatePasswordRecoveryModel,
 
     return Response(
         status_code=status.HTTP_201_CREATED
+    )
+
+
+@router.post('/change-password')
+async def change_password_view(token: uuid.UUID, change_password_data: ChangePasswordModel, pool=Depends(get_db_pool)):
+    await change_password(token, change_password_data, pool)
+    return Response(
+        status_code=status.HTTP_200_OK
     )
