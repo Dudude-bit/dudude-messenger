@@ -4,6 +4,9 @@ module default {
         required property created_at -> datetime;
         required property expires -> duration;
         required property expires_at := .created_at + .expires;
+        required property is_active -> bool {
+            default := true;
+        };
         required property token -> uuid {
             constraint exclusive;
             readonly := true;
