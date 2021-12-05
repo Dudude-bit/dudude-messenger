@@ -1,15 +1,8 @@
+import uuid
+
 import ujson
 from edgedb import AsyncIOClient
-from fastapi import Header, Request
-
-
-async def get_user_from_request(request: Request, token=Header(None)):
-    pool = request.state.pool
-    query = """
-    SELECT User {id} filter .token.value = <uuid>$token
-    """
-    user = await pool.query_single_json(query, token=token)
-    return ujson.loads(user)
+from fastapi import Header, Request, Depends
 
 
 def get_db_pool(request: Request):
@@ -18,6 +11,14 @@ def get_db_pool(request: Request):
 
 def get_nats_client(request: Request):
     return request.state.nats
+
+
+async def get_user_from_request(pool: AsyncIOClient = Depends(get_db_pool), token: uuid.UUID = Header(None)):
+    query = """
+    SELECT User {id} filter .token.value = <uuid>$token
+    """
+    user = await pool.query_json(query, token=token)
+    return ujson.loads(user) or None
 
 
 async def _create_chat(chat_data, pool: AsyncIOClient):
@@ -42,6 +43,17 @@ async def _create_user(user_data, pool: AsyncIOClient):
         activation_code=user_data['activation_code']
     )
     return ujson.loads(result)
+
+
+async def _activate_user(activation_code, pool: AsyncIOClient):
+    query = """
+    UPDATE User FILTER .activation_code = <uuid>$activation_code
+            SET
+            {
+                is_active := true
+            }
+    """
+    await pool.query_required_single_json(query, activation_code=activation_code)
 
 
 async def _create_or_return_login_token(login_data, pool: AsyncIOClient):
@@ -75,3 +87,14 @@ async def _create_password_recover(recover_data, pool: AsyncIOClient):
                                  expires=recover_data['expires'],
                                  token=recover_data['token'],
                                  email=recover_data['email'])
+
+
+async def _change_password(token, change_password_data, pool: AsyncIOClient):
+    query = """
+    UPDATE PasswordRecovery 
+    FILTER .token = <uuid>$token 
+    SET { .user.password := <str>$password }
+    """
+    await pool.query_single_json(query,
+                                 token=token,
+                                 password=change_password_data['password'])
