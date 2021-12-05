@@ -23,3 +23,7 @@ class ResponseLoginModel(BaseModel):
 
 class CreatePasswordRecoveryModel(BaseModel):
     email: EmailStr
+
+
+class ChangePasswordModel(BaseModel):
+    password: str
