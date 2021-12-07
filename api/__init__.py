@@ -21,3 +21,5 @@ router.include_router(
     user.router,
     tags=['User']
 )
+
+__all__ = ['router']

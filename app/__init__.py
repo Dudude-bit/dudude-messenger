@@ -1,34 +1,37 @@
-import os
-import logging
 from typing import Callable
 
 from fastapi import FastAPI
 from fastapi.responses import UJSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 
-from database import EdgeDatabase, NatsQueue
-from exceptions import NotImproperlyConfigure
-import messenger
+from api import router
+
+
+def init_cors(app: FastAPI):
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"]
+    )
+
+
+def init_routers(app: FastAPI):
+    app.include_router(router)
 
 
 def create_app():
+    settings = Settings()
+
     app = FastAPI(default_response_class=UJSONResponse)
 
     app.include_router(messenger.router)
 
-    edgedb_instance = os.getenv('edgedb_instance', None)
+    db = EdgeDatabase(settings.edgedb_instance)
 
-    nats_dsn = os.getenv('nats_dsn', None)
-
-    if edgedb_instance is None:
-        raise NotImproperlyConfigure('define edgedb instance name')
-
-    if nats_dsn is None:
-        raise NotImproperlyConfigure('define nats dsn')
-
-    db = EdgeDatabase(edgedb_instance)
-
-    nats_queue = NatsQueue(nats_dsn)
+    nats_queue = NatsQueue(settings.nats_dsn)
 
     @app.middleware('http')
     async def add_db_pool(request: Request, call_next: Callable):
@@ -53,9 +56,8 @@ def create_app():
 if __name__ == '__main__':
     import uvicorn
 
-    app = create_app()
     uvicorn.run(
-        app
+        create_app()
     )
 
 # TODO add expiring logic to user token
